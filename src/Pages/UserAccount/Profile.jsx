@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Typography, Avatar, Switch, TextField, Button, List, ListItem, ListItemText, Container } from "@mui/material";
+import { Box, Typography, Avatar, Switch, TextField, Button, List, ListItem, ListItemText, Container, OutlinedInput } from "@mui/material";
 import { useAuth } from "../../components/Context/AuthContext";
 import "./Profile.scss";
 
@@ -35,113 +35,110 @@ const Profile = ({ toggleTheme, isDarkMode }) => {
 
   return (
     <Container>
-    <Box
-      className={`profile-container ${isDarkMode ? "dark-mode" : "light-mode"}`}
-      sx={{
-        p: 3,
-        bgcolor: isDarkMode ? "#121212" : "#f9f9f9",
-        color: isDarkMode ? "#fff" : "#000",
-      }}
-    >
-      {/* Header Section */}
-      <Box className="header" display="flex" alignItems="center" gap={2}>
-        <Avatar alt="User Avatar" src={profileImage} sx={{ width: 100, height: 100 }} />
-        <Box>
-          <Typography variant="h5" fontWeight="bold">
-            <TextField
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              variant="standard"
-              label="Name"
-              fullWidth
-              sx={{
-                width: { xs: "100%", sm: "75%" },
-                color: isDarkMode ? "#fff" : "#000",
-              }}
-            />
-          </Typography>
-          <Typography variant="body1">Front-End Developer | React Enthusiast</Typography>
-          <input type="file" accept="image/*" style={{ marginTop: "10px" }} onChange={handleImageUpload} />
+      <Box
+        className={`profile-container ${isDarkMode ? "dark-mode" : "light-mode"}`}
+        sx={{
+          p: 3,
+          bgcolor: isDarkMode ? "#121212" : "#f9f9f9",
+          color: isDarkMode ? "#fff" : "#000",
+        }}
+      >
+        {/* Header Section */}
+        <Box className="header" display="flex" flexDirection="column" alignItems="center" gap={2}>
+          <Avatar alt="User Avatar" src={profileImage} sx={{ width: { xs: 60, sm: 100 }, height: { xs: 60, sm: 100 } }} />
+          <Box>
+            <Typography  variant="h5" fontWeight="bold">
+              <OutlinedInput 
+              
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Name"
+                fullWidth
+                sx={{ color : "#000", outlineColor :"#000"}}
+              />
+            </Typography>
+            <Typography sx={{color : "#000"}} variant="body1">Front-End Developer | React Enthusiast</Typography>
+            <input className="btn btn-primary text-decoration-none" type="file" accept="image/*" style={{ marginTop: "10px" }} onChange={handleImageUpload} />
+          </Box>
         </Box>
-      </Box>
 
-      {/* About Section */}
-      <Box mt={4}>
-        <Typography variant="h6" fontWeight="bold">
-          About Me
-        </Typography>
-        <TextField
-          value={about}
-          onChange={(e) => setAbout(e.target.value)}
-          variant="outlined"
-          multiline
-          rows={3}
-          fullWidth
-          sx={{
-            mt: 2,
-            bgcolor: isDarkMode ? "#333" : "#fff",
-            color: isDarkMode ? "#fff" : "#000",
-          }}
-        />
-      </Box>
-
-      {/* Purchased Courses Section */}
-      {/* {purchasedCourses.length > 0 && (
+        {/* About Section */}
         <Box mt={4}>
           <Typography variant="h6" fontWeight="bold">
-            Purchased Courses
+            About Me
           </Typography>
-          <List sx={{ mt: 2, bgcolor: isDarkMode ? "#333" : "#fff", borderRadius: 2 }}>
-            {purchasedCourses.map((course, index) => (
-              <ListItem key={index}>
-                <ListItemText primary={`Course ID: ${course}`} />
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      )} */}
-
-      {/* Settings Section */}
-      <Box mt={5}>
-        <Typography variant="h6" fontWeight="bold">
-          Settings
-        </Typography>
-        <Box display="flex" flexDirection="column" gap={2} mt={2}>
-          <Box display="flex" alignItems="center" justifyContent="space-between">
-            <Typography variant="body1">Dark Mode</Typography>
-            <Switch checked={isDarkMode} onChange={toggleTheme} />
-          </Box>
-
-          <Box display="flex" alignItems="center" justifyContent="space-between">
-            <Typography variant="body1">Language</Typography>
-            <TextField
-              select
-              SelectProps={{ native: true }}
-              value={language}
-              onChange={handleLanguageChange}
-              sx={{ maxWidth: 150 }}
-            >
-              <option value="English">English</option>
-              <option value="Arabic">العربية</option>
-            </TextField>
-          </Box>
-        </Box>
-      </Box>
-
-      {/* Logout Button */}
-      <Box mt={5}>
-        {isLoggedIn && (
-          <Button
-            onClick={logout}
+          <TextField
+            value={about}
+            onChange={(e) => setAbout(e.target.value)}
             variant="outlined"
-            color="secondary"
-            sx={{ borderRadius: "20px", px: 3, py: 1, fontWeight: "bold" }}
-          >
-            Logout
-          </Button>
-        )}
+            multiline
+            rows={3}
+            fullWidth
+            sx={{
+              mt: 2,
+              bgcolor: isDarkMode ? "#333" : "#fff",
+              color: isDarkMode ? "#fff" : "#000",
+            }}
+          />
+        </Box>
+
+        {/* Purchased Courses Section */}
+        {/* {purchasedCourses.length > 0 && (
+          <Box mt={4}>
+            <Typography variant="h6" fontWeight="bold">
+              Purchased Courses
+            </Typography>
+            <List sx={{ mt: 2, bgcolor: isDarkMode ? "#333" : "#fff", borderRadius: 2, width: '100%' }}>
+              {purchasedCourses.map((course, index) => (
+                <ListItem key={index} sx={{ padding: 1 }}>
+                  <ListItemText primary={`Course ID: ${course}`} />
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        )} */}
+
+        {/* Settings Section */}
+        <Box mt={5}>
+          <Typography variant="h6" fontWeight="bold">
+            Settings
+          </Typography>
+          <Box display="flex" flexDirection="column" gap={2} mt={2}>
+            <Box display="flex" alignItems="center" justifyContent="space-between">
+              <Typography variant="body1">Dark Mode</Typography>
+              <Switch checked={isDarkMode} onChange={toggleTheme} />
+            </Box>
+
+            <Box display="flex" alignItems="center" justifyContent="space-between">
+              <Typography variant="body1">Language</Typography>
+              <TextField
+                select
+                SelectProps={{ native: true }}
+                value={language}
+                onChange={handleLanguageChange}
+                sx={{ maxWidth: 150 }}
+              >
+                <option value="English">English</option>
+                <option value="Arabic">العربية</option>
+              </TextField>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Logout Button */}
+        <Box mt={5}>
+          {isLoggedIn && (
+            <Button
+              onClick={logout}
+              variant="outlined"
+              color="secondary"
+              sx={{ borderRadius: "20px", px: 3, py: 1, fontWeight: "bold" }}
+            >
+              Logout
+            </Button>
+          )}
+        </Box>
       </Box>
-    </Box>
     </Container>
   );
 };

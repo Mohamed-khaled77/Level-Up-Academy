@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleUser, faClock, faDollarSign, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleUser,
+  faClock,
+  faDollarSign,
+  faLayerGroup,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   Box,
   Button,
@@ -18,6 +23,7 @@ import {
   CircularProgress, // استيراد CircularProgress للـ Loader
 } from "@mui/material";
 import PaymentForm from "./PaymentForm";
+import { useAuth } from "../../../components/Context/AuthContext";
 
 export default function CourseDetails() {
   const { documentId } = useParams();
@@ -26,61 +32,77 @@ export default function CourseDetails() {
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState("");
   const [rating, setRating] = useState(0);
-  const [userName, setUserName] = useState("");
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
-
+  const {  user, } = useAuth();
+  const [name, setName] = useState(
+    user ? user.username : localStorage.getItem("name") || "John Doe"
+  );
   useEffect(() => {
     axios
       .get(`http://localhost:1337/api/cards/${documentId}`, {
         params: { populate: "*" },
       })
-      .then((res) => {
+      .then(res => {
         setCardCourses(res.data.data);
         setReviews(res.data.data.reviews || []);
         setIsLoading(false);
       })
-      .catch((err) => {
+      .catch(err => {
         console.error("Error fetching course details:", err);
         setIsLoading(false);
       });
   }, [documentId]);
+  useEffect(() => {
+    const storedComments = JSON.parse(localStorage.getItem('comments')) || [];
+  setReviews(storedComments);
+    // تحديث localStorage إذا كانت البيانات من التوكين
+    localStorage.setItem("name", name);
+  }, [name]);
 
-  const handleReviewSubmit = () => {
-    if (!newReview || !userName || rating === 0) {
-      alert("Please enter your name, a review, and a rating!");
+  const handleReviewSubmit = async () => {
+    if (!newReview || !name || rating === 0) {
       return;
     }
-
-    const newComment = { user: userName, text: newReview, rating };
+  
+    const newComment = { user: name, text: newReview, rating };
     setReviews((prev) => [newComment, ...prev]);
     setNewReview("");
-    setUserName("");
+    setName("");
     setRating(0);
-
-    axios
-      .post(`http://localhost:1337/api/reviews`, {
-        data: { user: userName, text: newReview, rating, course: documentId },
-      })
-      .then(() => console.log("Review submitted successfully"))
-      .catch((err) => console.error("Error submitting review:", err));
+  
+    // حفظ التعليق في localStorage
+    const storedComments = JSON.parse(localStorage.getItem('comments')) || [];
+    storedComments.push(newComment);
+    localStorage.setItem('comments', JSON.stringify(storedComments));
+  
+    try {
+      await axios.post(`http://localhost:1337/api/reviews`, {
+        data: { user: name, text: newReview, rating, course: documentId },
+      });
+      console.log("Review submitted successfully");
+    } catch (err) {
+      console.error("Error submitting review:", err);
+    }
   };
+  
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
-  const handlePaymentSuccess = (paymentDetails) => {
+  const handlePaymentSuccess = paymentDetails => {
     console.log("Payment Successful!", paymentDetails);
     setPaymentSuccess(true); // تم تفعيل النجاح بعد الدفع
 
     // تحديث بروفايل المستخدم بإضافة الكورس المشتراة
 
-    const currentUserCourses = JSON.parse(localStorage.getItem('userCourses')) || [];
+    const currentUserCourses =
+      JSON.parse(localStorage.getItem("userCourses")) || [];
 
     // إضافة الكورس إلى قائمة الكورسات المشتراة
     const updatedCourses = [...currentUserCourses, documentId];
-    localStorage.setItem('userCourses', JSON.stringify(updatedCourses));
+    localStorage.setItem("userCourses", JSON.stringify(updatedCourses));
 
     console.log("Course added to profile successfully");
   };
@@ -89,17 +111,26 @@ export default function CourseDetails() {
     setIsModalOpen(true); // فتح المودال عند الضغط على شراء
   };
 
-  const handleVideoChange = (direction) => {
-    if (direction === "next" && currentVideoIndex < cardCourses.Video_block.length - 1) {
-      setCurrentVideoIndex((prev) => prev + 1);
+  const handleVideoChange = direction => {
+    if (
+      direction === "next" &&
+      currentVideoIndex < cardCourses.Video_block.length - 1
+    ) {
+      setCurrentVideoIndex(prev => prev + 1);
     } else if (direction === "prev" && currentVideoIndex > 0) {
-      setCurrentVideoIndex((prev) => prev - 1);
+      setCurrentVideoIndex(prev => prev - 1);
     }
   };
 
   if (isLoading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}>
         <CircularProgress />
       </Box>
     ); // عرض الـ Loader عند تحميل البيانات
@@ -112,7 +143,11 @@ export default function CourseDetails() {
   return (
     <Box sx={{ padding: 4 }}>
       {/* Course Details Section */}
-      <Grid order={1} container spacing={3} sx={{ backgroundColor: "", borderRadius: 3 }}>
+      <Grid
+        order={1}
+        container
+        spacing={3}
+        sx={{ backgroundColor: "", borderRadius: 3 }}>
         <Grid item xs={12} md={6}>
           <Typography variant="h4" gutterBottom>
             {cardCourses.Card_Title}
@@ -123,10 +158,16 @@ export default function CourseDetails() {
           <Stack direction="row" spacing={3} sx={{ mt: 3 }}>
             <Typography>
               <b>Price:</b> {cardCourses.Card_prise}
-              <FontAwesomeIcon icon={faDollarSign} className="me-2 text-primary" />
+              <FontAwesomeIcon
+                icon={faDollarSign}
+                className="me-2 text-primary"
+              />
             </Typography>
             <Typography>
-              <FontAwesomeIcon icon={faLayerGroup} className="me-2 text-primary" />
+              <FontAwesomeIcon
+                icon={faLayerGroup}
+                className="me-2 text-primary"
+              />
               <b>Courses:</b> {cardCourses.Courses_num}
             </Typography>
             <Typography>
@@ -163,15 +204,7 @@ export default function CourseDetails() {
             Reviews
           </Typography>
           <Box sx={{ mb: 3 }}>
-            <TextField
-              fullWidth
-              label="Your Name"
-              variant="outlined"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              sx={{ mb: 2 }}
-              required
-            />
+            <p> {name} </p>
             <Rating
               name="rating"
               value={rating}
@@ -185,11 +218,14 @@ export default function CourseDetails() {
               multiline
               rows={3}
               value={newReview}
-              onChange={(e) => setNewReview(e.target.value)}
+              onChange={e => setNewReview(e.target.value)}
               sx={{ mb: 2 }}
               required
             />
-            <Button variant="contained" color="primary" onClick={handleReviewSubmit}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleReviewSubmit}>
               Submit Review
             </Button>
           </Box>
@@ -198,7 +234,10 @@ export default function CourseDetails() {
               <Card key={index} sx={{ mb: 2 }}>
                 <CardContent>
                   <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                    <FontAwesomeIcon icon={faCircleUser} className="me-2 text-primary" />
+                    <FontAwesomeIcon
+                      icon={faCircleUser}
+                      className="me-2 text-primary"
+                    />
                     {review.user} - <Rating value={review.rating} readOnly />
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
@@ -223,19 +262,20 @@ export default function CourseDetails() {
               poster={`http://localhost:1337${cardCourses.Card_img.url}`}
               sx={{ borderRadius: 2 }}
             />
-            <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+            <Box
+              sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
               <Button
                 variant="outlined"
                 disabled={currentVideoIndex === 0}
-                onClick={() => handleVideoChange("prev")}
-              >
+                onClick={() => handleVideoChange("prev")}>
                 Previous
               </Button>
               <Button
                 variant="outlined"
-                disabled={currentVideoIndex === cardCourses.Video_block.length - 1}
-                onClick={() => handleVideoChange("next")}
-              >
+                disabled={
+                  currentVideoIndex === cardCourses.Video_block.length - 1
+                }
+                onClick={() => handleVideoChange("next")}>
                 Next
               </Button>
             </Box>
