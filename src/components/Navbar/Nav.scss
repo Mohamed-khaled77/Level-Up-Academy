@@ -1,0 +1,25 @@
+.backGroundNav{
+  background-color: #D3D3D3;
+}
+ul ,
+li,
+a,
+link{
+  text-decoration: none;
+  list-style: none;
+  
+}
+.hov:hover{
+  color: white !important; 
+}
+.navbar{
+  z-index: 999999999999;
+}
+
+.nav-link {
+  color: #000; // اللون الافتراضي
+  transition: color 0.3s ease;
+  &.text-primary {
+    color: var(--bs-primary); // لون الـ primary
+  }
+}

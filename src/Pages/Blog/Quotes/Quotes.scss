@@ -1,0 +1,34 @@
+.cont {
+  height: 100vh; /* 100% من ارتفاع النافذة */
+  box-sizing: border-box; 
+  scrollbar-width: thin; /* جعل الشريط نحيفًا */
+  scrollbar-color: #ffc107 #f1f1f1; /* لضمان أن الـ padding مش هيؤثر على الحجم الكلي */
+}
+
+
+/* تعديل عرض الشريط */
+
+
+/* تعديل شكل المقبض */
+.cont::-webkit-scrollbar-thumb {
+  background-color: #007bff; /* لون المقبض */
+  border-radius: 10px; /* جعل المقبض مدور */
+  border: 2px solid #fff; /* إضافة حدود حول المقبض */
+}
+
+/* تعديل شكل المسار */
+.cont::-webkit-scrollbar-track {
+  background: #f1f1f1; /* لون المسار */
+  border-radius: 20px; /* جعل المسار مدور */
+}
+
+
+body {
+  overflow: hidden; /* إخفاء التمرير الأساسي للصفحة بحيث يكون التمرير داخل الـ section فقط */
+}
+.cont{
+  button{
+    width: fit-content;
+    text-align: center;
+  }
+}

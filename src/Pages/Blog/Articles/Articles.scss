@@ -1,0 +1,11 @@
+.con {
+  height: 100vh; /* 100% من ارتفاع النافذة */
+  overflow-y: auto; /* تمكين التمرير داخل الـ section */
+  box-sizing: border-box; 
+  scrollbar-width: thin; /* لجعل الشريط أضيق */
+  scrollbar-color: #007bff #f1f1f1;/* لضمان أن الـ padding مش هيؤثر على الحجم الكلي */
+}
+
+body {
+  overflow: hidden; /* إخفاء التمرير الأساسي للصفحة بحيث يكون التمرير داخل الـ section فقط */
+}

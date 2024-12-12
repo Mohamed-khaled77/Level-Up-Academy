@@ -1,0 +1,30 @@
+.swiper-button-prev,
+.swiper-button-next {
+  width: 40px; /* تقليل العرض */
+  height: 40px; /* تقليل الارتفاع */
+  background-color: rgba(0, 0, 0, 0.1); /* خلفية دائرية بلون شفاف */
+  border-radius: 50%; /* جعل الشكل دائري */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease-in-out; /* تأثير عند التغيير */
+  
+  &::after {
+    font-size: 14px; /* تقليل حجم الأيقونة */
+    color: #0d6efd; /* لون الأيقونة */
+  }
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  background-color: rgba(0, 0, 0, 0.2); /* لون أغمق عند التمرير */
+  transform: scale(1.1); /* تكبير الزر قليلاً */
+}
+
+.swiper-button-prev {
+ 
+}
+
+.swiper-button-next {
+   /* تعديل المسافة على اليمين */
+}

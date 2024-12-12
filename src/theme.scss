@@ -1,0 +1,19 @@
+// المتغيرات الخاصة بـ Light Mode
+$background-light: #ffffff;
+$text-light: #000000;
+
+// المتغيرات الخاصة بـ Dark Mode
+$background-dark: #121212;
+$text-dark: #ffffff;
+
+// المود الأساسي
+:root {
+  --background-color: #{$background-light};
+  --text-color: #{$text-light};
+}
+
+// مود الـ Dark Mode
+[data-theme="dark"] {
+  --background-color: #{$background-dark};
+  --text-color: #{$text-dark};
+}
